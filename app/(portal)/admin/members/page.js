@@ -82,7 +82,7 @@ export default async function MembersAdmin({ searchParams }) {
       </div>
       {isAdmin && (
         <p className="small muted">
-          Roles: <b>Financial Secretary</b> manages payment types, billing and confirmations, and can verify members. <b>Administrator</b> can do everything,
+          Roles: <b>Financial Secretary</b> manages payment types, billing and confirmations, and can verify members. <b>Publicity Secretary (PRO)</b> publishes announcements and news and moderates comments. <b>Administrator</b> can do everything,
           including assigning roles and suspending members.
         </p>
       )}

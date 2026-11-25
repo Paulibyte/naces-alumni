@@ -1,6 +1,7 @@
 import { requireUser, ROLE_LABELS, isFinance } from '@/lib/auth';
 import { query } from '@/lib/db';
 import Shell from '@/app/components/Shell';
+import { getUnreadCount } from '@/lib/news';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,8 +17,9 @@ export default async function PortalLayout({ children }) {
     pendingSlips = rows[0].slips;
     pendingMembers = rows[0].members;
   }
+  const unreadNews = await getUnreadCount(user.id);
   return (
-    <Shell user={user} roleLabel={ROLE_LABELS[user.role]} pendingSlips={pendingSlips} pendingMembers={pendingMembers}>
+    <Shell user={user} roleLabel={ROLE_LABELS[user.role]} pendingSlips={pendingSlips} pendingMembers={pendingMembers} unreadNews={unreadNews}>
       {children}
     </Shell>
   );

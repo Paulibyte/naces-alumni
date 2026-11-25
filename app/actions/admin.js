@@ -31,7 +31,7 @@ export async function setMemberRole(formData) {
   const admin = await requireUser(['admin']);
   const id = Number(formData.get('id'));
   const role = formData.get('role');
-  if (!['member', 'fin_sec', 'admin'].includes(role) || id === admin.id) return;
+  if (!['member', 'fin_sec', 'publicity', 'admin'].includes(role) || id === admin.id) return;
   await query('UPDATE users SET role = $1 WHERE id = $2', [role, id]);
   await audit({ query }, admin.id, 'member.role', { member_id: id, role });
   revalidatePath('/admin/members');

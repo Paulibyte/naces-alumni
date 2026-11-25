@@ -4,6 +4,7 @@ import { getStanding } from '@/lib/finance';
 import { query } from '@/lib/db';
 import { money, fmtDate, SET_LABELS } from '@/lib/format';
 import { ChargeBadge, StatusBadge } from '@/app/components/ui';
+import { getFeed, excerpt } from '@/lib/news';
 
 export default async function Dashboard() {
   const user = await requireUser();
@@ -13,6 +14,8 @@ export default async function Dashboard() {
       WHERE p.user_id = $1 ORDER BY p.created_at DESC LIMIT 5`,
     [user.id]
   );
+  const latest = await getFeed(user.id, null, { limit: 4 });
+  const urgentUnread = latest.filter((p) => p.priority === 'urgent' && !p.is_read);
   const first = user.full_name.split(' ').slice(-1)[0];
   const standingGood = s.outstanding <= 0;
 
@@ -25,6 +28,10 @@ export default async function Dashboard() {
         </div>
         <Link href="/pay" className="btn">Make a payment</Link>
       </div>
+
+      {urgentUnread.map((p) => (
+        <Link key={p.id} href={`/news/${p.id}`} className="notice-strip">Urgent: {p.title} →</Link>
+      ))}
 
       <div className={`alert ${standingGood ? 'ok' : 'error'}`}>
         {standingGood
@@ -121,6 +128,33 @@ export default async function Dashboard() {
           )}
           <p className="small" style={{ marginBottom: 0 }}><Link href="/payments">See full payment history →</Link></p>
         </div>
+      </div>
+
+      <div className="card">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+          <h2>Latest announcements &amp; news</h2>
+          <Link href="/news" className="small">See all →</Link>
+        </div>
+        {latest.length === 0 ? (
+          <div className="empty">Nothing posted yet.</div>
+        ) : (
+          <table>
+            <tbody>
+              {latest.map((p) => (
+                <tr key={p.id}>
+                  <td>
+                    <Link href={`/news/${p.id}`}><b>{p.title}</b></Link>{' '}
+                    {!p.is_read && <span className="badge b-pending">New</span>}
+                    <div className="small muted">{excerpt(p.body, 120)}</div>
+                  </td>
+                  <td className="small muted right" style={{ whiteSpace: 'nowrap' }}>
+                    {p.kind === 'announcement' ? 'Announcement' : 'News'}<br />{fmtDate(p.published_at)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       <div className="card">

@@ -12,6 +12,8 @@ export async function GET(_req, { params }) {
   if (parts[0] === 'slips') {
     const ownerId = Number(parts[1]);
     if (ownerId !== user.id && !isFinance(user)) return new Response('Forbidden', { status: 403 });
+  } else if (parts[0] === 'posts') {
+    // news/announcement images: any signed-in member
   } else {
     return new Response('Not found', { status: 404 });
   }

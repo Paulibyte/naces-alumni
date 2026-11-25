@@ -24,7 +24,18 @@ Next.js 15 + self-hosted PostgreSQL + local file storage, for the Hostinger VPS.
   or void a charge billed in error
 - Overview: total received, outstanding, collection per billing, money received per payment type
 
-**Administrator**: everything above plus assigning roles (Member / Financial Secretary / Administrator) and suspending members.
+**Administrator**: everything above plus assigning roles (Member / Financial Secretary / Publicity Secretary / Administrator) and suspending members.
+
+## Stage 2 — Announcements & News
+
+- **Publicity Secretary (PRO)** role (assign it under *Members & verification*). The PRO and Administrator can post.
+- Two kinds of post: **Announcements** (official notices) and **News** (stories about members and events)
+- Optional cover picture, **Urgent** flag (red banner on every member's dashboard until they open it), **Pin to top**,
+  an optional "remove from feed after" date, and comments on/off per post
+- Save as draft first, publish when ready; unpublish, edit or delete later
+- Members see an unread count in the menu, "New" badges, and the latest posts on their dashboard
+- Members can comment and delete their own comments; the PRO/Admin can remove any comment
+- *Manage posts* shows how many members have opened each post (e.g. "34 of 52")
 
 ### How balances are worked out
 Confirmed dues payments are applied oldest-first: first to the items the member ticked, then to their oldest unpaid
@@ -46,7 +57,7 @@ npm ci
 npm run migrate
 npm run seed:admin                          # creates the first admin from .env
 NODE_OPTIONS=--max-old-space-size=2048 npm run build
-pm2 start npm --name naces -- start         # listens on port 3010 (set PORT to change)
+pm2 start npm --name naces -- start         # listens on port 3020 (set PORT to change)
 pm2 save
 ```
 
@@ -56,7 +67,7 @@ server {
   server_name naces.yourdomain.com;
   client_max_body_size 6m;                  # payment slips up to 5 MB
   location / {
-    proxy_pass http://127.0.0.1:3010;
+    proxy_pass http://127.0.0.1:3020;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
@@ -73,7 +84,7 @@ Updating later: `git pull && npm ci && npm run migrate && npm run build && pm2 r
 | Stage | Module |
 |---|---|
 | 1 ✅ | Members, verification, roles, finance (payment types, billing, slips, confirmation, balances) |
-| 2 | Announcements & News |
+| 2 ✅ | Announcements & News — urgent/pinned posts, cover pictures, comments, unread badges, "seen by" counts |
 | 3 | Elections — positions, contestants, voting window, eligibility set per election by the committee, auto-declared winners |
 | 4 | Library (documents, constitution, minutes, photos) |
 | 5 | Board Meetings — LiveKit Cloud: camera, mic, raise hand, chat, screen share, scheduled meetings |

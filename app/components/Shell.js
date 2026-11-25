@@ -4,11 +4,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { logoutAction } from '@/app/actions/auth';
 
-export default function Shell({ user, roleLabel, pendingSlips, pendingMembers, children }) {
+export default function Shell({ user, roleLabel, pendingSlips, pendingMembers, unreadNews, children }) {
   const [open, setOpen] = useState(false);
   const path = usePathname();
   const fin = user.role === 'fin_sec' || user.role === 'admin';
   const admin = user.role === 'admin';
+  const publisher = user.role === 'publicity' || admin;
   const L = ({ href, children: c, count }) => (
     <Link
       href={href}
@@ -39,6 +40,10 @@ export default function Shell({ user, roleLabel, pendingSlips, pendingMembers, c
           <L href="/dashboard">Dashboard</L>
           <L href="/pay">Make a payment</L>
           <L href="/payments">My payments</L>
+
+          <div className="nav-label">Association</div>
+          <L href="/news" count={unreadNews}>Announcements & News</L>
+          {publisher && <L href="/news/manage">Manage posts</L>}
 
           {fin && (
             <>
